@@ -9,7 +9,7 @@ const Footer = () => (
           target="_blank"
           rel="noreferrer"
           href="http://www.github.com/dannymichaels/">
-          Daniel Michael &copy; 2020
+          Daniel Michael &copy; 2021
         </a>
       </Typography>
     </div>
