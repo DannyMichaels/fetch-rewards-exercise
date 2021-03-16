@@ -59,7 +59,7 @@ function App() {
     );
 
   // you can also use the guard operator instead of filtering, which is more elegant, but instructions said to "filter".
-  const itemsJSX = getQueriedItems().length ? ( // if items found in search.
+  const itemsJSX = getQueriedItems().length ? ( // if items are searched and found in search.
     getQueriedItems()
       .filter(({ name }) => Boolean(name)) // will return items that aren't null or undefined a.k.a "falsy"
       .map((item) => {
@@ -94,7 +94,7 @@ function App() {
         );
       })
   ) : (
-    <Typography>No Items found</Typography> // if no items found.
+    <Typography>No Items found</Typography> // if no items found while searching.
   );
 
   const loadingJSX = (
