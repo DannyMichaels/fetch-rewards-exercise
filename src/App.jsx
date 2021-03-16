@@ -29,7 +29,7 @@ function App() {
       (a, b) => {
         const number1 = parseInt(a.name?.match(/\d+/));
         const number2 = parseInt(b.name?.match(/\d+/));
-        // this doesn't work fors ome reason
+        // this doesn't work for  some reason
         return number1 - number2;
       }
     );
