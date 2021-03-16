@@ -1,25 +1,32 @@
 import './App.css';
 import { useState, useMemo } from 'react';
 import axios from 'axios';
-import { Box, Card, LinearProgress, Typography } from '@material-ui/core';
+import { Box, Card, Grid, LinearProgress, Typography } from '@material-ui/core';
 import Layout from './components/shared/layout/Layout';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 function App() {
   const [items, setItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const [search, setSearch] = useState('');
   const [itemsAreLoaded, setItemsAreLoaded] = useState(false);
 
   // sort items by listId
   const getSortedItems = (items) => {
-    const sortedItems = items.sort((a, b) => {
-      if (a.listId < b.listId) {
-        return -1;
-      } else if (a.listId > b.listId) {
-        return 1;
-      } else {
-        return 0;
-      }
+    const sortedItemsByListId = items.sort((a, b) => {
+      return parseInt(a.listId) - parseInt(b.listId);
     });
+
+    const sortedItems = sortedItemsByListId.sort(
+      // sort only by digits in name because all names have "item" in them.
+      (a, b) => {
+        const number1 = parseInt(a.name?.match(/\d+/));
+        const number2 = parseInt(b.name?.match(/\d+/));
+        // this doesn't work fors ome reason
+        return number1 - number2;
+      }
+    );
+
     return sortedItems;
   };
 
@@ -34,6 +41,10 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
+  const addToCart = (itemToAdd) => {
+    setCartItems((prevState) => [itemToAdd, ...prevState]);
+  };
+
   const getQueriedItems = () =>
     // get items that incldue search results, my own bonus.
     items.filter((item) =>
@@ -41,17 +52,23 @@ function App() {
     );
 
   // you can also use the guard operator instead of filtering, which is more elegant, but instructions said to "filter".
-  const itemsJSX = getQueriedItems().length ? (
+  const itemsJSX = getQueriedItems().length ? ( // if items found in search.
     getQueriedItems()
       .filter(({ name }) => Boolean(name)) // will return items that aren't null or undefined a.k.a "falsy"
       .map((item) => (
-        <Card key={item.id}>
-          <Typography>name: {item.name?.toUpperCase()}</Typography>
+        <Card style={{ border: '1px solid #999' }} key={item.id}>
+          <Grid container item direction="row" justify="center">
+            <Typography>Add to cart</Typography>
+            <Box mx={2}>
+              <ShoppingCartIcon onClick={() => addToCart(item)} />
+            </Box>
+          </Grid>
+          <Typography>name: {item.name}</Typography>
           <Typography>list Id: {item.listId}</Typography>
         </Card>
       ))
   ) : (
-    <Typography>No Items found</Typography>
+    <Typography>No Items found</Typography> // if no items found.
   );
 
   const loadingJSX = (
@@ -64,7 +81,10 @@ function App() {
   );
 
   return (
-    <Layout title="Items App" setSearch={setSearch}>
+    <Layout
+      title="Items App"
+      setSearch={setSearch}
+      cartState={{ cartItems, setCartItems }}>
       <main className="App">
         <div className="inner-column">
           <Typography

@@ -1,7 +1,17 @@
-import { AppBar, InputBase, Toolbar, Typography } from '@material-ui/core';
+import { useState } from 'react';
+import {
+  AppBar,
+  Box,
+  IconButton,
+  InputBase,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import SearchIcon from '@material-ui/icons/Search';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import OpenCart from './OpenCart';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,7 +43,11 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 auto',
     padding: '20px',
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  icon: {
+    color: 'white',
   },
   grow: {
     flexGrow: 1,
@@ -82,39 +96,63 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Header({ title, setSearch }) {
+export default function Header({
+  title,
+  setSearch,
+  cartState: { cartItems, setCartItems },
+}) {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
   const classes = useStyles();
 
   const handleSearch = ({ target: { value } }) => {
     setSearch(value);
   };
 
-  return (
-    <div className={classes.root}>
-      <AppBar className={classes.appBar} position="fixed">
-        <Toolbar>
-          <div className={classes.innerColumn}>
-            <Typography variant="h6" className={classes.title}>
-              {title}
-            </Typography>
+  const toggleCartOpen = () => {
+    setIsCartOpen(!isCartOpen);
+  };
 
-            <div className={classes.grow} />
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+  return (
+    <>
+      <div className={classes.root}>
+        <AppBar className={classes.appBar} position="fixed">
+          <Toolbar>
+            <div className={classes.innerColumn}>
+              <Typography variant="h6" className={classes.title}>
+                {title}
+              </Typography>
+
+              <div className={classes.grow} />
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  onChange={handleSearch}
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                />
               </div>
-              <InputBase
-                onChange={handleSearch}
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-              />
+              <Box mx={2}>
+                <IconButton className={classes.icon}>
+                  <ShoppingCartIcon onClick={toggleCartOpen} />
+                  &nbsp;
+                  {cartItems.length}
+                </IconButton>
+              </Box>
             </div>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </div>
+          </Toolbar>
+        </AppBar>
+      </div>
+      <OpenCart
+        isCartOpen={isCartOpen}
+        setCartItems={setCartItems}
+        cartIems={cartItems}
+      />
+    </>
   );
 }

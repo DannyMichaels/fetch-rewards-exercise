@@ -1,9 +1,9 @@
-import Footer from './Footer';
-import Header from './Header';
+import Footer from '../../Footer/Footer';
+import Header from './Header/Header';
 
-const Layout = ({ title, children, setSearch }) => (
+const Layout = ({ title, children, setSearch, cartState }) => (
   <div className="layout">
-    <Header title={title} setSearch={setSearch} />
+    <Header title={title} setSearch={setSearch} cartState={cartState} />
     <div className="layout-children">{children}</div>
     <Footer />
   </div>
