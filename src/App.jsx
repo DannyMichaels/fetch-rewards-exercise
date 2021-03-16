@@ -1,7 +1,14 @@
 import './App.css';
 import { useState, useMemo } from 'react';
 import axios from 'axios';
-import { Box, Card, Grid, LinearProgress, Typography } from '@material-ui/core';
+import {
+  Box,
+  Card,
+  Grid,
+  IconButton,
+  LinearProgress,
+  Typography,
+} from '@material-ui/core';
 import Layout from './components/shared/layout/Layout';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
@@ -41,7 +48,7 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
-  const addToCart = (itemToAdd) => {
+  const onAddToCart = (itemToAdd) => {
     setCartItems((prevState) => [itemToAdd, ...prevState]);
   };
 
@@ -55,18 +62,37 @@ function App() {
   const itemsJSX = getQueriedItems().length ? ( // if items found in search.
     getQueriedItems()
       .filter(({ name }) => Boolean(name)) // will return items that aren't null or undefined a.k.a "falsy"
-      .map((item) => (
-        <Card style={{ border: '1px solid #999' }} key={item.id}>
-          <Grid container item direction="row" justify="center">
-            <Typography>Add to cart</Typography>
-            <Box mx={2}>
-              <ShoppingCartIcon onClick={() => addToCart(item)} />
-            </Box>
-          </Grid>
-          <Typography>name: {item.name}</Typography>
-          <Typography>list Id: {item.listId}</Typography>
-        </Card>
-      ))
+      .map((item) => {
+        const inCart =
+          cartItems.filter((cartItem) => cartItem.id === item.id).length > 0;
+
+        return (
+          <Card style={{ border: '1px solid #999' }} key={item.id}>
+            <Grid
+              container
+              item
+              direction="row"
+              justify="center"
+              alignItems="center">
+              {!inCart ? (
+                <IconButton
+                  onClick={() => onAddToCart(item)}
+                  style={{ color: '#212121' }}>
+                  <Typography>Add to cart</Typography>&nbsp;
+                  <ShoppingCartIcon />
+                </IconButton>
+              ) : (
+                <Box my={2}>
+                  <Typography>Item already in cart</Typography>
+                </Box>
+              )}
+            </Grid>
+
+            <Typography>name: {item.name}</Typography>
+            <Typography>list Id: {item.listId}</Typography>
+          </Card>
+        );
+      })
   ) : (
     <Typography>No Items found</Typography> // if no items found.
   );

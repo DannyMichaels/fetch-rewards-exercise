@@ -115,6 +115,11 @@ export default function Header({
 
   return (
     <>
+      <OpenCart
+        isCartOpen={isCartOpen}
+        setCartItems={setCartItems}
+        cartItems={cartItems}
+      />
       <div className={classes.root}>
         <AppBar className={classes.appBar} position="fixed">
           <Toolbar>
@@ -138,8 +143,8 @@ export default function Header({
                 />
               </div>
               <Box mx={2}>
-                <IconButton className={classes.icon}>
-                  <ShoppingCartIcon onClick={toggleCartOpen} />
+                <IconButton className={classes.icon} onClick={toggleCartOpen}>
+                  <ShoppingCartIcon />
                   &nbsp;
                   {cartItems.length}
                 </IconButton>
@@ -148,11 +153,6 @@ export default function Header({
           </Toolbar>
         </AppBar>
       </div>
-      <OpenCart
-        isCartOpen={isCartOpen}
-        setCartItems={setCartItems}
-        cartIems={cartItems}
-      />
     </>
   );
 }
