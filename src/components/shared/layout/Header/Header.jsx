@@ -30,10 +30,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '10px',
     marginRight: '5px',
   },
-
   text: {
-    color: ({ themeState }) =>
-      themeState === 'dark' ? { color: '#000' } : { color: '#fff' },
+    color: '#fff',
     textDecoration: 'none',
   },
   innerColumn: {
