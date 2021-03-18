@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import Layout from './components/shared/layout/Layout';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { getSortedItems } from './utils/getSortedItems';
 
 function App() {
   const [items, setItems] = useState([]);
@@ -18,36 +19,23 @@ function App() {
   const [search, setSearch] = useState('');
   const [itemsAreLoaded, setItemsAreLoaded] = useState(false);
 
-  // sort items by listId
-  const getSortedItems = (items) => {
-    const sortedItemsByListId = items.sort((a, b) => {
-      return parseInt(a.listId) - parseInt(b.listId);
-    });
-
-    const sortedItems = sortedItemsByListId.sort(
-      // sort only by digits in name because all names have "item" in them.
-      (a, b) => {
-        const number1 = parseInt(a.name?.match(/\d+/));
-        const number2 = parseInt(b.name?.match(/\d+/));
-        // this doesn't work for  some reason
-        return number1 - number2;
-      }
-    );
-
-    return sortedItems;
-  };
-
   // get the items on mount.
   useMemo(async () => {
+    // had to use api.allorigins to fix cors issue ... //https://allorigins.win/
     await axios
-      .get('https://fetch-hiring.s3.amazonaws.com/hiring.json')
-      .then(({ data }) => {
-        setItems(getSortedItems(data));
+      .get(
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          'https://fetch-hiring.s3.amazonaws.com/hiring.json'
+        )}`
+      )
+      .then(({ data: { contents } }) => {
+        setItems(getSortedItems(JSON.parse(contents)));
         setItemsAreLoaded(true);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err.message));
   }, []);
 
+  // cart feature, my own bonus.
   const onAddToCart = (itemToAdd) => {
     setCartItems((prevState) => [itemToAdd, ...prevState]);
   };
@@ -58,10 +46,9 @@ function App() {
       item?.name?.toLowerCase().includes(search.toLowerCase())
     );
 
-  // you can also use the guard operator instead of filtering, which is more elegant, but instructions said to "filter".
   const itemsJSX = getQueriedItems().length ? ( // if items are searched and found in search.
     getQueriedItems()
-      .filter(({ name }) => Boolean(name)) // will return items that aren't null or undefined a.k.a "falsy"
+      .filter(({ name }) => Boolean(name)) // will return items that aren't null or undefined a.k.a "non-falsy" values. You can also use the guard operator instead of filtering, which is more elegant, but instructions said to "filter".
       .map((item) => {
         const inCart =
           cartItems.filter((cartItem) => cartItem.id === item.id).length > 0;
@@ -97,15 +84,6 @@ function App() {
     <Typography>No Items found</Typography> // if no items found while searching.
   );
 
-  const loadingJSX = (
-    <div className="loading">
-      <Typography>loading...</Typography>
-      <Box my={2}>
-        <LinearProgress />
-      </Box>
-    </div>
-  );
-
   return (
     <Layout
       title="Items App"
@@ -122,7 +100,12 @@ function App() {
           {itemsAreLoaded ? (
             <div className="items-container">{itemsJSX}</div>
           ) : (
-            loadingJSX
+            <div className="loading">
+              <Typography>loading...</Typography>
+              <Box my={2}>
+                <LinearProgress />
+              </Box>
+            </div>
           )}
         </div>
       </main>

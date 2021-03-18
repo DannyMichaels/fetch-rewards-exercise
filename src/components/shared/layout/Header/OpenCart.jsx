@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import {
   Card,
   Grid,
@@ -49,8 +50,8 @@ export default function OpenCart({ isCartOpen, cartItems, setCartItems }) {
       {cartItems.map(
         (item) =>
           item.name && (
-            <>
-              <Card className={classes.listItem} key={item.id}>
+            <Fragment key={item.id}>
+              <Card className={classes.listItem}>
                 <Grid
                   container
                   item
@@ -68,7 +69,7 @@ export default function OpenCart({ isCartOpen, cartItems, setCartItems }) {
                 <Typography>list Id: {item.listId}</Typography>
               </Card>
               <br />
-            </>
+            </Fragment>
           )
       )}
     </div>
