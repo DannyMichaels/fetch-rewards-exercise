@@ -61,18 +61,13 @@ function App() {
               direction="row"
               justify="center"
               alignItems="center">
-              {!inCart ? (
-                <IconButton
-                  onClick={() => onAddToCart(item)}
-                  style={{ color: '#212121' }}>
-                  <Typography>Add to cart</Typography>&nbsp;
-                  <ShoppingCartIcon />
-                </IconButton>
-              ) : (
-                <Box my={2}>
-                  <Typography>Item already in cart</Typography>
-                </Box>
-              )}
+              {inCart && 'item already in cart, add more?'}
+              <IconButton
+                onClick={() => onAddToCart(item)}
+                style={{ color: '#212121' }}>
+                <Typography>Add to cart</Typography>&nbsp;
+                <ShoppingCartIcon />
+              </IconButton>
             </Grid>
 
             <Typography>name: {item.name}</Typography>

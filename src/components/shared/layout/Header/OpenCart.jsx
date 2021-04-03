@@ -41,14 +41,16 @@ const useStyles = makeStyles({
 export default function OpenCart({ isCartOpen, cartItems, setCartItems }) {
   const classes = useStyles({ isCartOpen });
 
-  const onRemoveCartItem = (itemId) => {
-    setCartItems((prevState) => prevState.filter((item) => item.id !== itemId));
+  const onRemoveCartItem = (payloadIndex) => {
+    setCartItems((prevState) =>
+      prevState.filter((_, idx) => idx !== payloadIndex)
+    );
   };
 
   return (
     <div className={classes.root}>
       {cartItems.map(
-        (item) =>
+        (item, idx) =>
           item.name && (
             <Fragment key={item.id}>
               <Card className={classes.listItem}>
@@ -60,7 +62,7 @@ export default function OpenCart({ isCartOpen, cartItems, setCartItems }) {
                   alignItems="center">
                   <IconButton
                     className={classes.icon}
-                    onClick={() => onRemoveCartItem(item.id)}>
+                    onClick={() => onRemoveCartItem(idx)}>
                     <Typography>Remove from cart</Typography>&nbsp;
                     <ClearIcon />
                   </IconButton>
